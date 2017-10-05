@@ -25,5 +25,5 @@
 
 ### Usage
 ```
-  $ imgresize \<inputfile\> \<outputfile\> [width]
+  $ imgresize <inputfile> <outputfile> [width]
 ```
