@@ -1,11 +1,11 @@
 # imgresizer
-##Image resizer (golang)
+## Image resizer (golang)
 
  This is a simple CLI tool for resizing jpeg (currently) images
  Written in Go and originally created to build on Joyent Triton/SmartOS for demoing Manta Compute Job capabilities
  Utilizes the nfnt/resize library
 
-###SmartOS - install git/go and clone repo
+### SmartOS - install git/go and clone repo
 ```
   $ pkgin av | grep git       # determine the available git package
   $ pkgin install git-2.1.0   # for example 2.1.0
@@ -15,7 +15,7 @@
   $ cd go/src/github.com
   $ git clone https://github.com/bradmusolff/imgresizer.git
 ```
-###SmartOS Build
+### SmartOS Build
 ```
   $ export GOPATH=/root/go
   $ cd /root/go
@@ -23,7 +23,7 @@
   $ go build github.com/imgresizer
 ```
 
-###Usage
+### Usage
 ```
-  $ imgresize \<inputfile\> \<outputfile\> [width]
+  $ imgresize <inputfile> <outputfile> [width]
 ```
