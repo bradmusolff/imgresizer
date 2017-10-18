@@ -2,52 +2,64 @@ package main
 
 import (
     "github.com/nfnt/resize"
+    "github.com/pborman/getopt"
     "image/jpeg"
     "log"
-    "strconv"
     "os"
 )
 
 func main() {
 
-    var width uint = 0
-    args := os.Args[1:]
+
     numargs := len(os.Args)
+    var file *os.File
+    var out *os.File
 
     if numargs < 2 {
-       log.Fatal("Usage: imgresize <inputfile> <outputfile> [width]")
+            log.Fatal("Usage: imgresize [ -i inputfile -o outputfile ] -w width")
     }
 
-    file, err := os.Open(args[0])
-    if err != nil {
-        log.Fatal(err)
-    } 
+  //  helpFlag := getopt.Bool('?', "display help")
+    outputfile := getopt.StringLong("output", 'o', "", "output file name")
+    inputfile := getopt.StringLong("input",'i',"","input file name")
+    width := getopt.UintLong("width",'w',640,"new width")
+    var opts = getopt.CommandLine
+
+    opts.Parse(os.Args)
+    if (((outputfile == nil) || (inputfile == nil)) && !(outputfile == nil && inputfile == nil) ) {
+       log.Fatal("Usage: imgresize [ -i inputfile -o outputfile ] -w width ")
+    }
+
+    if (*inputfile != "") {
+       var err error
+       file, err = os.Open(*inputfile)
+       if err != nil {
+           log.Fatal(err)
+       }
+    } else {
+       file = os.Stdin
+    }
+
 
     // decode jpeg into image.Image
     img, err := jpeg.Decode(file)
     if err != nil {
-	log.Fatal(err)
+	      log.Fatal(err)
     }
     file.Close()
-    if numargs >=3 {
- 
-        wd,err := strconv.ParseUint(args[2],0,32)
-        if err != nil {
-              log.Fatal(err)
-        }
-        width=uint(wd) 
+
+
+    m := resize.Resize(*width, 0, img, resize.Lanczos3)
+    if (*outputfile != "") {
+      var err error
+      out, err = os.Create(*outputfile)
+      if err != nil {
+  	      log.Fatal(err)
+      }
+      defer out.Close()
     } else {
-        width=640
+      out = os.Stdout
     }
-    
-    m := resize.Resize(width, 0, img, resize.Lanczos3)
-
-    out, err := os.Create(args[1])
-    if err != nil {
-	log.Fatal(err)
-    }
-    defer out.Close()
-
     // write new image to file
     jpeg.Encode(out, m, nil)
 }
